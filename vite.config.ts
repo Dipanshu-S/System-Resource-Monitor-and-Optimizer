@@ -6,6 +6,13 @@ export default defineConfig({
   plugins: [react()],
   base:"./",
   build: {
-    outDir: 'dist-react'
+    outDir: 'dist-react',
+    rollupOptions: {
+      external: ['diskusage']
+    }
+  },
+  server: {
+      port: 5173,
+      strictPort: true,
   },
 });
