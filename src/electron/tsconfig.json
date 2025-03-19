@@ -4,7 +4,9 @@
       "target": "ESNext",
       "module": "NodeNext",
       "outDir": "../../dist-electron",
-      "skipLibCheck": true
-    }
+      "skipLibCheck": true,
+      "noImplicitAny": false
+    },
+    "include": ["**/*", "../../types.d.ts"]
   }
   

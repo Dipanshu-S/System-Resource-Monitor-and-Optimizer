@@ -1,3 +1,11 @@
+/* Add a background image to the body */
+body {
+  background-image: "icon.png";
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
 #root {
   max-width: 1280px;
   margin: 0 auto;
@@ -11,9 +19,11 @@
   will-change: filter;
   transition: filter 300ms;
 }
+
 .logo:hover {
   filter: drop-shadow(0 0 2em #646cffaa);
 }
+
 .logo.react:hover {
   filter: drop-shadow(0 0 2em #61dafbaa);
 }
