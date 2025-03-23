@@ -1,6 +1,6 @@
-import osUtils from 'os-utils';
+import osUtils from 'os-utils/lib/osutils.js';
 import os from 'os';
-import disk from 'diskusage';
+import disk from 'diskusage/index.js';
 import { BrowserWindow } from 'electron';
 import { ipcWebContentsSend } from './util.js';
 
@@ -22,7 +22,7 @@ export function pollResources(mainWindow: BrowserWindow) {
 export function getStaticData() {
   const totalStorage = getStorageData().total;
   const cpuModel = os.cpus()[0].model;
-  const totalMemoryGB = Math.floor(os.totalmem() / (1024 * 1024 *1024));
+  const totalMemoryGB = Math.floor(os.totalmem() / (1024 * 1024 *1024) );
 
   return {
     totalStorage,

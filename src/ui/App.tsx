@@ -1,58 +1,138 @@
 import { useEffect, useMemo, useState } from 'react';
-import reactLogo from './assets/react.svg';
+import Icon from './assets/icon.png';
 import './App.css';
 import { useStatistics } from './useStatistics';
 import { Chart } from './Chart';
+import { StaticData, View } from '../../types';
 
 function App() {
+  const staticData = useStaticData();
   const [count, setCount] = useState(0);
-  const [staticData, setStaticData] = useState<any>(null); // define staticData state
+  const [setStaticData] = useState<any>(null); // define staticData state
   const statistics = useStatistics(10);
+  const [activeView, setActiveView] = useState<View>('CPU');
   const cpuUsages = useMemo(
     () => statistics.map((stat) => stat.cpuUsage),
     [statistics]
   );
+  const ramUsages = useMemo(
+    () => statistics.map((stat) => stat.ramUsage),
+    [statistics]
+  );
+  const storageUsages = useMemo(
+    () => statistics.map((stat) => stat.storageUsage),
+    [statistics]
+  );
+
+  const activeUsage = useMemo(() => {
+    switch (activeView) {
+      case "CPU":
+        return cpuUsages;
+      case "RAM":
+        return ramUsages;
+      case "STORAGE":
+        return storageUsages;
+    }
+  }, [activeView, cpuUsages, ramUsages , storageUsages]);
+
+  useEffect(() => {
+    return window.electron.subscribeChangeView((view) => setActiveView(view));
+  }, []);
+
 
   console.log(statistics);
 
-  // Define the missing function to fetch or set static data
-  const handleGetStaticData = async () => {
-    // For demonstration, we'll simulate fetching data with a timeout.
-    const data = await new Promise((resolve) =>
-      setTimeout(() => resolve({ message: 'Hello, world!', timestamp: Date.now() }), 500)
-    );
-    setStaticData(data);
-  };
-
   return (
-      <div className='App'>
-       <div style={{height:120 }}>
-        <Chart data = {cpuUsages} maxDataPoints={10}/>
+      <div className="App">
+        <Header />
+        <div className="main">
+          <div>
+            <SelectOption
+              onClick={() => setActiveView('CPU')} 
+              title="CPU"
+              view="CPU"
+              subTitle={staticData?.cpuModel ?? ''}
+              data={cpuUsages} 
+            />
+            <SelectOption 
+            onClick={() => setActiveView('RAM')}
+            title="RAM"
+            view="RAM"
+            subTitle={(staticData?.totalMemoryGB.toString() ?? '') + ' GB'}
+            data={ramUsages}
+            />
+            <SelectOption 
+            title="STORAGE"
+            onClick={() => setActiveView('STORAGE')}
+            view="STORAGE"
+            subTitle={(staticData?.totalStorage.toString() ?? '') + ' GB'}
+            data={storageUsages}
+            />
+          </div>
+          <div className="mainGrid">
+            <Chart 
+              selectedView={activeView} 
+              data = {activeUsage} 
+              maxDataPoints={10}
+            />
+         </div> 
        </div>
-       <div> 
-        <a href="https://react.dev" target="_blank" rel="noopener noreferrer">
-          <img src="icon.png" className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>UNIFIED OBSERVABILITY</h1>
-      <div className="card">
-        {/* Now calling the defined function */}
-        <button onClick={handleGetStaticData}>
-          Get Static Data
-        </button>
-        {/* Display the result on the page (formatted as JSON) */}
-        {staticData && (
-          <pre>{JSON.stringify(staticData, null, 2)}</pre>
-        )}
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </div>
+     </div>
   );
+}
+
+function SelectOption(props: { 
+  title: string;
+  view: View; 
+  subTitle: string;
+  data: number [];
+  onClick: () => void;
+}) {
+  return (
+  <button className="selectOption" onClick={props.onClick}>
+    <div className="selectOptionTitle">
+    <div>{props.title}</div>
+    <div>{props.subTitle}</div>
+    </div>
+    <div className='selectOptionChart'>
+    <Chart 
+      selectedView={props.view} 
+      data = {props.data} 
+      maxDataPoints={10}
+    />
+    </div>
+    </button>
+  );
+}
+
+function Header() {
+  return (
+    <header>
+        <button
+        id="close"
+        onClick={() => window.electron.sendFrameAction('CLOSE')}
+      />
+      <button
+        id="minimize"
+        onClick={() => window.electron.sendFrameAction('MINIMIZE')}
+      />
+      <button
+        id="maximize"
+        onClick={() => window.electron.sendFrameAction('MAXIMIZE')}
+      />
+    </header>
+  );
+}
+
+function useStaticData() {
+  const [staticData, setStaticData] = useState<StaticData | null>(null);
+  useEffect(() => {
+    (async () => {
+      setStaticData(await window.electron.getStaticData());
+    })();
+  }, []);
+
+  return staticData;
 }
 
 export default App;

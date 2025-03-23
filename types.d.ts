@@ -11,9 +11,14 @@ export type StaticData = {
   totalMemoryGB: number;
 };
 
+export type View = 'CPU' | 'RAM' | 'STORAGE';
+export type FrameWindowAction = 'CLOSE' | 'MAXIMIZE' | 'MINIMIZE'; 
+
 export type EventPayloadMapping = {
   statistics: Statistics;
   getStaticData: StaticData;
+  ChangeView: View;
+  sendFrameAction: FrameWindowAction;
 };
 
 export type UnsubscribeFunction = () => void;
@@ -21,8 +26,13 @@ export type UnsubscribeFunction = () => void;
 declare global {
   interface Window {
     electron: {
-      subscribeStatistics: (callback: (statistics: Statistics) => void
-    ) => UnsubscribeFunction;
+      subscribeStatistics: (
+        callback: (statistics: Statistics) => void
+      ) => UnsubscribeFunction;
+      subscribeChangeView: (
+        callback: (view: View) => void
+      ) => UnsubscribeFunction;
+      sendFrameAction: (payload: FrameWindowAction) => void;
       getStaticData: () => Promise<StaticData>;
     };
   }
