@@ -1,10 +1,18 @@
 import { app, BrowserWindow, ipcMain, Tray } from 'electron';
 import path from 'path';
 import { ipcMainHandle, ipcMainOn, isDev } from './util.js';
-import { getStaticData, pollResources } from './resourceManager.js';
+import { getBatteryData, getRunningApps, getStaticData, pollResources } from './resourceManager.js';
 import { getAssetPath, getPreloadPath } from './pathResolver.js';
 import { createTray } from './tray.js';
 import { createMenu } from './menu.js';
+
+ipcMain.handle('getBatteryData', async () => {
+  return await getBatteryData(); // NEW: returns battery data (or null)
+});
+
+ipcMain.handle('getRunningApps', async () => {
+  return await getRunningApps();  // NEW: returns running application data
+});
 
 function createWindow() {
   const mainWindow = new BrowserWindow({
@@ -68,4 +76,4 @@ function handleCloseEvents(mainWindow: BrowserWindow) {
   });
 }
 
-app.whenReady().then(createWindow); 
+app.whenReady().then(createWindow);

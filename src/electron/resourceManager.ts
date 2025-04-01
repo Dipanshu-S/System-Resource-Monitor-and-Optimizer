@@ -3,6 +3,7 @@ import os from 'os';
 import disk from 'diskusage/index.js';
 import { BrowserWindow } from 'electron';
 import { ipcWebContentsSend } from './util.js';
+import si from 'systeminformation/lib/index.js';
 
 const POLLING_INTERVAL = 500;
 
@@ -29,6 +30,45 @@ export function getStaticData() {
     cpuModel,
     totalMemoryGB,
   };
+}
+
+export async function getBatteryData() {
+  // Check if battery information is available.
+  try {
+    const battery = await si.battery();
+    if (!battery.hasBattery) {
+      return null;
+    }
+    // For simplicity, we simulate a 12‑hour history by making 72 identical entries of the current battery percentage.
+    // In a real-world app, you might store historical battery data over time.
+    const history = Array(72).fill(battery.percent);
+    return {
+      history,
+      isCharging: battery.isCharging,
+    };
+  } catch (err) {
+    console.error('Error fetching battery data:', err);
+    return null;
+  }
+}
+
+export async function getRunningApps() {
+  try {
+    // Retrieve processes data
+    const processData = await si.processes();
+    // Filter out system processes (for example, those running as 'SYSTEM' or 'root')
+    const apps = processData.list.filter(p => p.user && !['SYSTEM', 'root'].includes(p.user));
+    return apps.map((p, index) => ({
+      srNo: index + 1,
+      appName: p.name,
+      currentCpuUsage: p.cpu,
+      memoryConsumption: p.mem,
+      permissionsAllowed: "Standard"  // Placeholder; adjust if you have specific permission data
+    }));
+  } catch (err) {
+    console.error('Error fetching running apps:', err);
+    return [];
+  }
 }
 
 function getCpuUsage(): Promise<number> {

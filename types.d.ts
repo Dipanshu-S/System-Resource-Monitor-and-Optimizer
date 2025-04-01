@@ -19,6 +19,14 @@ export type EventPayloadMapping = {
   getStaticData: StaticData;
   ChangeView: View;
   sendFrameAction: FrameWindowAction;
+  getBatteryData: { history: number[]; isCharging: boolean } | null;
+  getRunningApps: {
+    srNo: number;
+    appName: string;
+    currentCpuUsage: number;
+    memoryConsumption: number;
+    permissionsAllowed: string;
+  }[];
 };
 
 export type UnsubscribeFunction = () => void;
@@ -34,8 +42,25 @@ declare global {
       ) => UnsubscribeFunction;
       sendFrameAction: (payload: FrameWindowAction) => void;
       getStaticData: () => Promise<StaticData>;
+      getBatteryData: () => Promise<{ history: number[]; isCharging: boolean } | null>;
+      getRunningApps: () => Promise<{
+        srNo: number;
+        appName: string;
+        currentCpuUsage: number;
+        memoryConsumption: number;
+        permissionsAllowed: string;
+      }[]>;
     };
   }
 }
+
+export type EventPayloadMapping = {
+  statistics: Statistics;
+  getStaticData: StaticData;
+  ChangeView: View;
+  sendFrameAction: FrameWindowAction;
+  getBatteryData: { history: number[]; isCharging: boolean } | null; // NEW
+};
+
 
 export {}; // Ensures this file is treated as a module

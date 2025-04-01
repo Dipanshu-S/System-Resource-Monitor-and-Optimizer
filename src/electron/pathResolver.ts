@@ -15,5 +15,5 @@ export function getUIPath() {
 }
 
 export function getAssetPath() {
-  return path.join(app.getAppPath(), isDev() ? '.' : '..', '/src/assets');
+  return path.join(app.getAppPath(), isDev() ? '.' : '..', '/src/ui/assets');
 }
