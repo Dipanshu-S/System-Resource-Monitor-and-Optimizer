@@ -6,6 +6,12 @@ import { Chart } from './Chart';
 import { StaticData, View } from '../../types';
 import { BaseChart } from './BaseChart';
 import { DynamicTable } from './DynamicTable';
+import MenuIcon from './assets/menu_icon.png';
+import CloseIcon from './assets/close_icon.png';
+import SecurityIcon from './assets/security_icon.png';
+import { SecuritySection } from './SecuritySection';
+import { SettingsSection } from './SettingsSection';
+
 
 function App() {
   const staticData = useStaticData();
@@ -14,6 +20,7 @@ function App() {
   const [setStaticData] = useState<any>(null); // define staticData state
   const statistics = useStatistics(10);
   const [activeView, setActiveView] = useState<View>('CPU');
+  const [activeSection, setActiveSection] = useState<'dashboard' | 'security' | 'settings'>('dashboard');
   const cpuUsages = useMemo(
     () => statistics.map((stat) => stat.cpuUsage),
     [statistics]
@@ -42,61 +49,124 @@ function App() {
     return window.electron.subscribeChangeView((view) => setActiveView(view));
   }, []);
 
+  const showSidebar = () => {
+    const sidebar = document.querySelector('.sidebar') as HTMLElement;
+    if (sidebar) {
+      sidebar.style.display = 'flex';
+    }
+  };
+
+  const hideSidebar = () => {
+    const sidebar = document.querySelector('.sidebar') as HTMLElement;
+    if (sidebar) {
+      sidebar.style.display = 'none';
+    }
+  };
 
   console.log(statistics);
 
   return (
-    <div className="App">
+    <div className="App"> 
     <Header />
     <div className="title">
       <center><h3>ApexSys : The Unified System Management</h3></center>
     </div>
-    <div className="main">
-     <div className="resourceTitle"><h2>Core Resources</h2></div>
-     <div className="batteryStatusTitle"><h2>Battery Stats</h2></div> 
-     <div className="smallCharts">
-      <div>
-        <SelectOption
-          onClick={() => setActiveView('CPU')} 
-          title="CPU"
-          view="CPU"
-          subTitle={staticData?.cpuModel ?? ''}
-          data={cpuUsages} 
-        />
-        <SelectOption 
-          onClick={() => setActiveView('RAM')}
-          title="RAM"
-          view="RAM"
-          subTitle={(staticData?.totalMemoryGB.toString() ?? '') + ' GB'}
-          data={ramUsages}
-        />
-        <SelectOption 
-          title="STORAGE"
-          onClick={() => setActiveView('STORAGE')}
-          view="STORAGE"
-          subTitle={(staticData?.totalStorage.toString() ?? '') + ' GB'}
-          data={storageUsages}
-        />
-       </div> 
-      </div>
-      <div className="mainGrid">
-        <Chart 
-          selectedView={activeView} 
-          data={activeUsage} 
-          maxDataPoints={10}
-        />
-      </div>
-      <div className="powerManagement">
-        <PowerManagementSection />
-      </div>
+    <nav>
+      <ul className="sidebar">
+       <li onClick={() => { hideSidebar(); setActiveSection('dashboard'); }}>
+          <a href="#">
+             <img  src={CloseIcon} alt="Close Icon" width="36" height="36"/>
+          </a>
+        </li>
+        <li onClick={() => { hideSidebar(); setActiveSection('dashboard'); }}>
+          <a href="#">DashBoard</a>
+        </li>
+        <li onClick={() => { hideSidebar(); setActiveSection('security'); }}>
+          <a href="#">Security</a>
+        </li>
+        <li onClick={() => { hideSidebar(); setActiveSection('settings'); }}>
+          <a href="#">Settings</a>
+        </li>
+      </ul>
+      <ul>
+        <li onClick={showSidebar}>
+          <a href="#">
+             <img  src={MenuIcon} alt="Menu Icon" width="36" height="36"/>
+          </a>
+        </li>
+      </ul>
+    </nav>
+    {/* Conditional Rendering Based on Active Section */}
+    {activeSection === 'dashboard' && (
+        <>
+          <div className="main">
+            <div className="resourceTitle"><h2>Core Resources</h2></div>
+            <div className="batteryStatusTitle"><h2>Battery Stats</h2></div> 
+            <div className="smallCharts">
+              <div>
+                <SelectOption
+                  onClick={() => setActiveView('CPU')} 
+                  title="CPU"
+                  view="CPU"
+                  subTitle={staticData?.cpuModel ?? ''}
+                  data={cpuUsages} 
+                />
+                <SelectOption 
+                  onClick={() => setActiveView('RAM')}
+                  title="RAM"
+                  view="RAM"
+                  subTitle={(staticData?.totalMemoryGB?.toString() ?? '') + ' GB'}
+                  data={ramUsages}
+                />
+                <SelectOption 
+                  title="STORAGE"
+                  onClick={() => setActiveView('STORAGE')}
+                  view="STORAGE"
+                  subTitle={(staticData?.totalStorage?.toString() ?? '') + ' GB'}
+                  data={storageUsages}
+                />
+              </div> 
+            </div>
+            <div className="mainGrid">
+              <Chart 
+                selectedView={activeView} 
+                data={activeUsage} 
+                maxDataPoints={10}
+              />
+            </div>
+            <div className="powerManagement">
+              <PowerManagementSection />
+            </div>
+          </div>
+          {/* Active Applications Section */}
+          <div className="dynamicTableSection">
+            <h2 style={{ textAlign: "center", color: "#00A0CC", margin: "1rem 1", marginLeft: "5rem" }}>Active Applications</h2>
+            <DynamicTable />
+          </div>
+        </>
+      )}
+      
+      {activeSection === 'security' && (
+       <div style={{ margin: '1rem' }}>
+         <h2 style={{ display: "flex", alignItems: "center", textAlign: "left", marginLeft: "5rem", fontSize: "3rem", marginTop: "0.5rem", color: "#00A0CC" }}>
+            <img
+              src={SecurityIcon}
+              alt="Security Icon"
+              style={{ width: "6rem", height: "6rem", marginRight: "1rem", opacity:"0.85" }}
+            />
+            Security Page
+         </h2>
+         <SecuritySection />
+       </div>
+      )}
+
+      {activeSection === 'settings' && (
+        <div style={{ margin: '1rem' }}>
+          <SettingsSection />
+        </div>
+      )}
     </div>
-    {/* New Active Applications Section */}
-    <div className="dynamicTableSection">
-      <h2 style={{ textAlign: "center", color: "#00A0CC", margin: "1rem 0" }}>Active Applications</h2>
-      <DynamicTable />
-    </div>
- </div>
-);
+  );
 }
 
 function SelectOption(props: { 
@@ -162,7 +232,7 @@ function PowerManagementSection() {
         <>
           <BatteryChart data={batteryData.history} />
           <div className="batteryStatus">
-            {batteryData.isCharging ? "Charging" : "Not Plugged In"}
+            {batteryData.isCharging ? "Charging" : <h4>Not Plugged In</h4>}
           </div>
         </>
       ) : (

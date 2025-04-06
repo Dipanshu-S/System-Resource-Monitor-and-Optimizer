@@ -1,6 +1,70 @@
 .App {
   background: url('./assets/background.gif') no-repeat center center fixed;
   background-size: cover;
+  min-height: 100vh;
+}
+
+nav{
+  background-color: none;
+  box-shadow: 3px 3px 5px rgba(0,0,0,0.1);
+}
+nav ul{
+  width: 100%;
+  list-style: none;
+  display: flex;
+  justify-content:flex-start;
+  align-items:center;
+}
+nav li{
+  height:30px;
+}
+nav a{
+  height: 100%;
+  padding: 0 12px;
+  text-decoration: none;
+  display:flex;
+  align-items: center;
+  color:#000000;
+}
+nav a:hover{
+  background-color: #ffffff;
+  opacity: 0.65;
+}
+
+.sidebar{
+  position:fixed;
+  top: 30px;
+  left:0;
+  height: 90vh;
+  width: 200px;
+  z-index:999;
+  background-color: rgba(255,255,255,0.2);
+  backdrop-filter: blur(10px);
+  box-shadow: -10px 0 10px rgba(0,0,0,0.1);
+  display: none;
+  flex-direction:column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  padding:60px;
+}
+.sidebar li{
+  width: 100%;
+  padding: 15px;
+  list-style: none;
+}
+.sidebar a{
+  width: 100%;
+  height: 100%;
+  display: block;
+  text-decoration: none;
+  color: #fff; /* Adjust color */
+  font-size: 18px;
+  padding: 10px 20px;
+  transition: 0.3s;
+}
+.sidebar a:hover {
+  background-color: rgba(255, 255, 255, 0.5);
+  color: #000;
 }
 
 header {
@@ -34,18 +98,19 @@ header button {
   background-color: lime;
 }
 
+
 .main{
   display: grid;
   grid-template-columns: 3fr 5fr 4fr; /* or however you want to split columns */
   grid-template-rows: auto;          /* let the rows grow with content */
   gap: 1rem;
-  margin: 1rem;
+  margin: 1.5rem;
 }
 
 .mainGrid {
   grid-column: 2;
   height: 20rem;
-  width: auto;
+  width: 35rem;
   padding: 0.5rem;
   opacity: 0.85;
 }
@@ -66,7 +131,7 @@ header button {
 
 .selectOptionTitle{
   display: flex;
-  gap: 0.5 rem;
+  gap: 0.5rem;
 }
 
 .selectOptionTitle :first-child {
@@ -93,9 +158,9 @@ header button {
   background-color: #2c2c2c;
   padding: 0.5rem;
   border-radius: 0.5rem;
-  grid-column: 6;
+  grid-column: 11;
   height: 16rem;
-  width: auto;
+  width: 45rem;
   opacity: 0.85;
 }
 
@@ -108,12 +173,12 @@ header button {
 .smallCharts{
   grid-column: 1 ;
   height: auto;
-  width: auto;
+  width: 16rem;
   opacity: 0.85;
 }
 
 .title {
-  font-size: 40px;
+  font-size: 60px;
   font-family: Lucida;
 }
 
@@ -132,6 +197,7 @@ h2 {
   color: #00A0CC; /* Medium Purple */
   text-align: center;
   font-size: 2.5rem;
+  margin: 0;
   text-shadow:
     -1px -1px 0px #ffffff,  
      1px -1px 0px #ffffff,  
@@ -139,9 +205,20 @@ h2 {
      1px  1px 0px #ffffff;  
 }
 
+h4 {
+  color: #FF6347; /* Medium Purple */
+  text-align: center;
+  font-size: 2rem;
+  text-shadow:
+    -1px -1px 0px #000000,  
+     1px -1px 0px #000000,  
+    -1px  1px 0px #000000,  
+     1px  1px 0px #000000;  
+}
+
 .resourceTitle{
   grid-row: 1 / 2;
-  grid-column: 1 / 10;
+  grid-column: 1 / 3;
 }
 
 .batteryStatus{
@@ -152,17 +229,18 @@ h2 {
 
 .batteryStatusTitle{
   grid-row: 1 / 2;
-  grid-column: 11 / 19;
+  grid-column: 5 / 19;
 }
 
 .dynamicTableContainer {
-  max-height: 300px;       /* Limits the height of the table section */
+  max-height: 350px;       /* Limits the height of the table section */
   overflow-y: auto;        /* Enables vertical scrolling within the container */
   background-color: #1C1C1C;
   padding: 1rem;
   border-radius: 0.5rem;
-  margin:1rem;
+  margin: 1rem;
   opacity: 0.85;
+  max-width: auto;
 }
 
 .dynamicTableSection {

@@ -15,7 +15,9 @@ electron.contextBridge.exposeInMainWorld('electron', {
   getStaticData: () => ipcInvoke('getStaticData'),
   sendFrameAction: (payload) => ipcSend('sendFrameAction', payload),
   getBatteryData: () => ipcInvoke('getBatteryData'),
-  getRunningApps: () => ipcInvoke('getRunningApps')
+  getRunningApps: () => ipcInvoke('getRunningApps'),
+  getSecurityData: () => ipcInvoke('getSecurityData'),
+  getOpenPortsData: () => ipcInvoke('getOpenPortsData')
 } satisfies Window['electron']);
 
 function ipcInvoke<Key extends keyof EventPayloadMapping>(

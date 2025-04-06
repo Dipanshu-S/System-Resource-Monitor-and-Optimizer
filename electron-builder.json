@@ -1,6 +1,11 @@
 {
     "appId": "com.Dipanshu-Shamkuwar.ApexSys",
     "files": ["dist-electron", "dist-react"],
+    "asar": true,
+    "asarUnpack": [
+    "node_modules/systeminformation/**",
+    "node_modules/diskusage/**"
+    ],
     "icon": "./desktopIcon.png",
     "extraResources": ["dist-electron/preload.cjs", "src/assets/**"],
     "mac": {

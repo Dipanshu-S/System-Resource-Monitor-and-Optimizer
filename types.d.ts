@@ -14,9 +14,28 @@ export type StaticData = {
 export type View = 'CPU' | 'RAM' | 'STORAGE';
 export type FrameWindowAction = 'CLOSE' | 'MAXIMIZE' | 'MINIMIZE'; 
 
+export type SecurityData = {
+  osInfo: string;
+  networkTraffic: string;
+  antivirusStatus: string;
+  activePorts: number;
+  lastMalwareScan: string;
+};
+
+export type PortData = {
+  protocol: string;
+  localAddress: string;
+  localPort: number;
+  remoteAddress: string;
+  remotePort: number;
+  state: string;
+  pid: number;
+};
+
 export type EventPayloadMapping = {
   statistics: Statistics;
   getStaticData: StaticData;
+  getSecurityData: SecurityData;
   ChangeView: View;
   sendFrameAction: FrameWindowAction;
   getBatteryData: { history: number[]; isCharging: boolean } | null;
@@ -27,6 +46,7 @@ export type EventPayloadMapping = {
     memoryConsumption: number;
     permissionsAllowed: string;
   }[];
+  getOpenPortsData: PortData[];
 };
 
 export type UnsubscribeFunction = () => void;
@@ -50,17 +70,10 @@ declare global {
         memoryConsumption: number;
         permissionsAllowed: string;
       }[]>;
+      getSecurityData: () => Promise<SecurityData>;
+      getOpenPortsData: () => Promise<PortData[]>;
     };
   }
 }
-
-export type EventPayloadMapping = {
-  statistics: Statistics;
-  getStaticData: StaticData;
-  ChangeView: View;
-  sendFrameAction: FrameWindowAction;
-  getBatteryData: { history: number[]; isCharging: boolean } | null; // NEW
-};
-
 
 export {}; // Ensures this file is treated as a module
